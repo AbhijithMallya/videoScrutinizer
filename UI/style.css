@@ -24,17 +24,17 @@
   }
   @keyframes animate{
     0%,100%{
-      background-image: url('image3.jpg');
+      background-image: url('Bg_img01.jpg');
       
     }
     50%{
-      background-image: url('firstimage.jpg');
+      background-image: url('bg_img02.jpg');
       
     }25%{
-      background-image: url('2image.jpg');
+      background-image: url('bg_img04.jpg');
       
     }75%{
-      background-image: url('3image.jpg');
+      background-image: url('bg_img03.jpg');
       
     }
   
@@ -109,7 +109,7 @@
     
     padding-left: 10%;
     font-family: "Space Mono", monospace;
-    font-size: 12px;
+    font-size: 12px;  
   
     padding-top: 10%;
   }
@@ -238,5 +238,8 @@
     padding-top: 5%;
     padding-left: 15%;
     display: inline-block;
+  }
+  #sentence{
+    font-size: 30px;
   }
   
