@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>UPLOAD IMAGE</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+    />
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> -->
+  </head>
+  <body>
+    <div class="row">
+      <div class="col-lg-6" >
+        <h1>Image Upload and Resize</h1>
+        <form method="POST" enctype="multipart/form-data">
+          <input type="file" name="file" />
+          <input type="submit" value="SUBMIT" />
+        </form>
+        {% if filename %}
+        <h2>Resized Image:</h2>
+        <img
+          src="{{ url_for('static', filename='uploads/' + filename) }}"
+          width="400"
+          height="400"
+        />
+        {% endif %}
+      </div>
+      <div class="col-lg-6" style="padding: 40px;">
+        <h1 class="page-header">Live Streaming </h1>
+        <br>
+
+        <img
+          src="{{ url_for('video_feed') }}"
+          width="400"
+          height="400"
+        />
+    
+    </div>
+    </div>
+  </body>
+</html>
