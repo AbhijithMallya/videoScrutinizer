@@ -1,27 +1,44 @@
+# -----------WORKING------------
+# import face_recognition
+# known_image = face_recognition.load_image_file("faceImages/abhijith.jpg")
+# unknown_image = face_recognition.load_image_file("faceImages/mallya.jpg")
+
+# biden_encoding = face_recognition.face_encodings(known_image)[0]
+# print(biden_encoding)
+# unknown_encoding = face_recognition.face_encodings(unknown_image)[0]
+# print(unknown_encoding)
+
+# results = face_recognition.compare_faces([biden_encoding], unknown_encoding)
+# print("Comparison results : ",results)
+# -----------WORKING------------
+
 import face_recognition
 import cv2
 import numpy as np
-import csv 
-import os
-from datetime import datetime
+
+
+
 
 video_capture = cv2.VideoCapture(0)
 
-
 # Load a sample picture and learn how to recognize it.
-abhi_image = face_recognition.load_image_file("faceImages/abhijith.jpg")
-abhi_face_encoding = face_recognition.face_encodings(abhi_image)[0]
+abhijith_image = face_recognition.load_image_file("faceImages/abhijith.jpg")
+abhijith_face_encoding = face_recognition.face_encodings(abhijith_image)[0]
+
+# Load a second sample picture and learn how to recognize it.
+karthik_image = face_recognition.load_image_file("faceImages/karthik.jpg")
+karthik_face_encoding = face_recognition.face_encodings(karthik_image)[0]
 
 # Create arrays of known face encodings and their names
 known_face_encodings = [
-    abhi_face_encoding
+    abhijith_face_encoding,
+    karthik_face_encoding
 ]
+
 known_face_names = [
-    "Abhijith Mallya"
+    "Abhijith Mallya",
+    "Karthik"
 ]
-
-people = known_face_names.copy()
-
 
 # Initialize some variables
 face_locations = []
@@ -29,20 +46,9 @@ face_encodings = []
 face_names = []
 process_this_frame = True
 
-now = datetime.now()
-current_date = now.strftime("%Y-%m-%d")
-
-f = open(current_date + '.csv','w+',newline='')
-lnwrite =  csv.writer(f)
-
-
-
-#==============+Continue from below
-
 while True:
     # Grab a single frame of video
-    _, frame = video_capture.read()
-    small_frame =  cv2.resize(frame,(0,0),fx=0.25, )
+    ret, frame = video_capture.read()
 
     # Only process every other frame of video to save time
     if process_this_frame:
@@ -54,7 +60,7 @@ while True:
         
         # Find all the faces and face encodings in the current frame of video
         face_locations = face_recognition.face_locations(rgb_small_frame)
-        face_encodings = face_recognition.face_encodings(rgb_small_frame, face_loc  ations)
+        face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
         face_names = []
         for face_encoding in face_encodings:
