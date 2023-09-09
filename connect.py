@@ -1,30 +1,4 @@
-# import cv2
 
-# # Replace with your IP camera URL (including username and password)
-# camera_url = "http://192.168.2.1/cgi-bin/snapshot.cgi?chn=0&u=karthik&p=Admin_123&.mjpg"
-
-# # Create a VideoCapture object
-# cap = cv2.VideoCapture(camera_url)
-
-# if not cap.isOpened():
-#     print("Error: Could not connect to the camera.")
-#     exit()
-
-# while True:
-#     ret, frame = cap.read()
-
-#     if not ret:
-#         print("Error: Could not read frame.")
-#         break
-
-#     # Perform image processing or analysis on 'frame' here
-#     # Display the frame
-#     cv2.imshow("IP Camera Stream", frame)
-
-#     if cv2.waitKey(1) & 0xFF == ord('q'):
-#         break
-
-# cap.release()
 # cv2.destroyAllWindows()
 
 
@@ -42,32 +16,143 @@
 #     if ord('q') == cv2.waitKey(10):
 #         exit(0)
 
+
+
+
+# import cv2
+
+# # Define the camera's IP address and credentials
+# # camera_ip = "192.168.2.1"
+# # username = "karthik"
+# # password = "Admin_123"
+
+# # Define the URL for the MJPEG stream
+# stream_url = "rtsp://admin:Admin@123@192.168.2.1:554"
+# cap = cv2.VideoCapture(stream_url)
+
+# while True:
+#     ret, frame = cap.read()
+#     frame = cv2.resize(frame, (1220, 480), fx = 0.1, fy = 0.1)
+#     # frame = frame.resize(500,500,frame)
+
+#     if not ret:
+#         print("Error reading frame")
+#         break
+
+#     cv2.imshow('frame', frame)
+
+#     if cv2.waitKey(1) & 0xFF == ord('q'):
+#         break
+
+# cap.release()
+# cv2.destroyAllWindows()
+
+
+
+
+
+
+
+
+
 import cv2
+import threading
 
-# Define the camera's IP address and credentials
-camera_ip = "192.168.2.1"
-username = "karthik"
-password = "Admin_123"
+# Define the stream URLs for your CCTV cameras
+stream_urls = [
+    "rtsp://admin:Admin@123@192.168.2.1:554",
+    "rtsp://admin:Admin@123@192.168.2.2:554",
+    "rtsp://admin:Admin@123@192.168.2.3:554",
+    # Add the URLs for your other cameras here
+]
 
-# Define the URL for the MJPEG stream
-stream_url = "rtsp://admin:Admin@123@192.168.2.3:554"
+# Create a list to store VideoCapture objects
+capture_objects = []
 
-# Create a VideoCapture object
-cap = cv2.VideoCapture(stream_url)
+# Create VideoCapture objects for each stream URL
+for url in stream_urls:
+    cap = cv2.VideoCapture(url)
+    capture_objects.append(cap)
 
-while True:
-    ret, frame = cap.read()
-    frame = cv2.resize(frame, (1220, 480), fx = 0.1, fy = 0.1)
-    # frame = frame.resize(500,500,frame)
+# Function to read and display frames from a VideoCapture object
+def display_camera_stream(cap, window_name):
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            print(f"Error reading frame from {window_name}")
+            break
 
-    if not ret:
-        print("Error reading frame")
-        break
+        # Resize the frame if needed
+        frame = cv2.resize(frame, (1220, 480), fx = 0.1, fy = 0.1)
 
-    cv2.imshow('frame', frame)
+        cv2.imshow(window_name, frame)
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
-cap.release()
+# Create threads for each camera stream
+threads = []
+for i, cap in enumerate(capture_objects):
+    window_name = f'Camera {i + 1}'
+    thread = threading.Thread(target=display_camera_stream, args=(cap, window_name))
+    threads.append(thread)
+
+# Start the threads to display camera streams
+for thread in threads:
+    thread.start()
+
+# Wait for all threads to finish
+for thread in threads:
+    thread.join()
+
+# Release VideoCapture objects and close OpenCV windows
+for cap in capture_objects:
+    cap.release()
 cv2.destroyAllWindows()
+
+
+
+# import cv2
+
+# # Define the URLs for the MJPEG streams of multiple cameras
+# stream_urls = [
+#     "rtsp://admin:Admin@123@192.168.2.1:554",
+#     "rtsp://admin:Admin@123@192.168.2.2:554"
+#     # Add more stream URLs for additional cameras here
+# ]
+
+# # Create a list to store VideoCapture objects
+# capture_objects = []
+
+# # Create VideoCapture objects for each stream URL
+# for url in stream_urls:
+#     cap = cv2.VideoCapture(url)
+#     capture_objects.append(cap)
+
+# while True:
+#     frames = []  # To store frames from all cameras
+
+#     # Read frames from each camera
+#     for cap in capture_objects:
+#         ret, frame = cap.read()
+#         if not ret:
+#             print(f"Error reading frame from {cap}")
+#             continue
+
+#         # Resize each frame if needed
+#         frame = cv2.resize(frame, (1220, 480), fx=0.1, fy=0.1)
+
+#         frames.append(frame)
+
+#     # Display frames from all cameras side by side
+#     if len(frames) > 0:
+#         stacked_frames = cv2.hconcat(frames)
+#         cv2.imshow('Multiple Camera Streams', stacked_frames)
+
+#     if cv2.waitKey(1) & 0xFF == ord('q'):
+#         break
+
+# # Release VideoCapture objects and close OpenCV windows
+# for cap in capture_objects:
+#     cap.release()
+# cv2.destroyAllWindows()
