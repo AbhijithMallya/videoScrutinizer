@@ -116,12 +116,11 @@ while True:
                         # Write the detection to the CSV file
                         csv_writer.writerow([name, timestamp])
                         last_detection_time = current_time  
-        
 ###================   CSV READER START===============
 
 
 
-    
+
     # Display the resulting image
     cv2.imshow('Video',frame)
 

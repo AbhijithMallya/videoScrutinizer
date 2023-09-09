@@ -1,54 +1,22 @@
-# -----------WORKING------------
-# import face_recognition
-# known_image = face_recognition.load_image_file("faceImages/abhijith.jpg")
-# unknown_image = face_recognition.load_image_file("faceImages/mallya.jpg")
-
-# biden_encoding = face_recognition.face_encodings(known_image)[0]
-# print(biden_encoding)
-# unknown_encoding = face_recognition.face_encodings(unknown_image)[0]
-# print(unknown_encoding)
-
-# results = face_recognition.compare_faces([biden_encoding], unknown_encoding)
-# print("Comparison results : ",results)
-# -----------WORKING------------
-
 import face_recognition
 import cv2
 import numpy as np
 import csv , datetime , time
 from dataExtraction import getFaceEncodings
+from csvWriter import writeCsv
 
 
+#Initialize the video Streams
+video_capture = cv2.VideoCapture('rtsp://admin:Admin@123@192.168.2.2:554')
 
-video_capture = cv2.VideoCapture(0)
 
-
-csv_file = open("recognized_detections.csv", "a", newline="")
+#CSV File initialization
+csv_file = open("recognized_detections_list.csv", "a", newline="")
 csv_writer = csv.writer(csv_file)
-
 csv_writer.writerow(["Name", "Timestamp"])
 last_detection_time = time.time()
 
-
-# # Load a sample picture and learn how to recognize it.
-# abhijith_image = face_recognition.load_image_file("faceImages/abhijith.jpg")
-# abhijith_face_encoding = face_recognition.face_encodings(abhijith_image)[0]
-
-# # Load a second sample picture and learn how to recognize it.
-# karthik_image = face_recognition.load_image_file("faceImages/karthik.jpg")
-# karthik_face_encoding = face_recognition.face_encodings(karthik_image)[0]
-
-# # Create arrays of known face encodings and their names
-# known_face_encodings = [
-#     abhijith_face_encoding,
-#     karthik_face_encoding
-# ]
-
-# known_face_names = [
-#     "Abhijith Mallya",
-#     "Karthik"
-# ]
-
+#Get facial Encoding from the Folder --> faceImages
 known_face_encodings , known_face_names = getFaceEncodings('faceImages')
 
 # Initialize some variables
@@ -57,6 +25,7 @@ face_encodings = []
 face_names = []
 process_this_frame = True
 
+
 while True:
     # Grab a single frame of video
     ret, frame = video_capture.read()
@@ -64,10 +33,13 @@ while True:
     # Only process every other frame of video to save time
     if process_this_frame:
         # Resize frame of video to 1/4 size for faster face recognition processing
-        small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+
+        frame = cv2.resize(frame, (500, 600), fx=0.25, fy=0.25) #change to 0.25 for faster recognition
+        #small_frame = cv2.resize(frame, (1200, 600), fx=0.25, fy=0.25) #change to 0.25 for faster recognition
 
         # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
-        rgb_small_frame = small_frame[:, :, ::-1]
+        # rgb_small_frame = small_frame[:, :, ::-1]
+        rgb_small_frame = frame[:, :, ::-1]
         
         # Find all the faces and face encodings in the current frame of video
         face_locations = face_recognition.face_locations(rgb_small_frame)
@@ -106,22 +78,9 @@ while True:
 
 
 ###================   CSV READER START===============
-        if name != "Unknown":
-                    # Get the current timestamp
-                    timestamp = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+        writeCsv(name=name , last_detection_time=last_detection_time, csv_writer= csv_writer)
+###================   CSV READER END===============
 
-                    # Check if enough time (30 seconds) has passed since the last detection
-                    current_time = time.time()
-                    if current_time - last_detection_time >= 30:
-                        # Write the detection to the CSV file
-                        csv_writer.writerow([name, timestamp])
-                        last_detection_time = current_time  
-        
-###================   CSV READER START===============
-
-
-
-    
     # Display the resulting image
     cv2.imshow('Video',frame)
 
